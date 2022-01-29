@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+
+        {% for group in groups %}
+
+            <div class="col">
+
+                <div class="card text-center">
+                    <div class="card-header">
+                        Группа
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ group.title }}</h5>
+                        <p class="card-text">{{ group.description }}</p>
+
+                        {% if user.is_authenticated and user.group_joined.all %}
+                            {{ u.title }}
+                            {% if user in group.students.all %}
+                                <a href="{% url 'classroom:courses' group.id %}" class="btn btn-primary">Продолжить обучение</a>
+                            {% endif %}
+
+                        {% else %}
+                            <a href="{% url 'classroom:join_group' group.id %}" class="btn btn-primary">Присоединиться</a>
+                        {% endif %}
+
+
+                        {#  <a href="{% url 'classroom:courses' group.id %}" class="btn btn-primary">Подробнее</a>#}
+                    </div>
+                    <div class="card-footer text-muted">
+                        {% if group.students.count %}
+                            Количество студентов в группе: {{ group.students.count }}
+                        {% else %}
+                            В группе еще нет студентов
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+        {% endfor %}
+
+
+    </div>
+
+{% endblock %}

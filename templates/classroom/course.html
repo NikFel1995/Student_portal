@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+    {% if not courses %}
+        <div class="col">
+            <div class=" text-center">
+                Курсов пока нет
+            </div>
+        </div>
+
+    {% else %}
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+
+            {% for course in courses %}
+
+                <div class="col">
+
+                    <div class="card text-center">
+                        <div class="card-header">
+                            Курс
+                        </div>
+
+                        <div class="card-body">
+                            <h5 class="card-title">{{ course.title }}</h5>
+                            <p class="card-text">{{ course.description }}</p>
+                            <a href="{% url 'classroom:modules' group.pk course.pk %}" class="btn btn-primary">Войти</a>
+                        </div>
+
+                        <div class="card-footer text-muted">
+                            Автор курса: {{ course.owner.last_name }} {{ course.owner.first_name }}
+
+                            {#                                                <p>#}
+                            {#                                                    <button class="btn btn-secondary" type="button"#}
+                            {#                                                            data-bs-toggle="collapse"#}
+                            {#                                                            data-bs-target="#collapseExample{{ course.id }}"#}
+                            {#                                                            aria-expanded="false"#}
+                            {#                                                            aria-controls="collapseExample{{ course.id }}">#}
+                            {#                                                        Студенты#}
+                            {#                                                    </button>#}
+                            {#                                                </p>#}
+                            {##}
+                            {#                                                <div class="collapse" id="collapseExample{{ course.id }}">#}
+                            {#                                                    <div class="card card-body">#}
+                            {#                                                        {% for student in students %}#}
+                            {#                                                            <li> {{ student.username }} </li>#}
+                            {#                                                        {% endfor %}#}
+                            {#                                                    </div>#}
+                            {#                                                </div>#}
+
+                        </div>
+
+
+                    </div>
+                </div>
+
+            {% endfor %}
+
+
+        </div>
+
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block section %}
+
+{% endblock %}
+
+{% block content %}
+
+    {% if user_in_group %}
+
+        <h4>{{ quiz.title }}</h4>
+
+        <div class="alert alert-primary" role="alert" id="timer-box"></div>
+
+        <form id="quiz-form" method="post" action="{% url 'classroom:quiz:submit_quiz' group.id course.id module.id quiz.id %}" role="form" class="col s12">
+            {% csrf_token %}
+
+            {% for question in questions %}
+                <div class="col s12">
+                    <br>
+                    <p>{{ question.title }}</p>
+                    <input type="hidden" name="question" value="{{ question.id }}">
+                </div>
+
+                {% for answer in question.get_answers %}
+                    <div class="input col s12">
+                        <label>
+                            <input name="answer" type="checkbox" value="{{ question.id }},{{ answer.id }}"/>
+                            <span>{{ answer.title }}</span>
+                        </label>
+                    </div>
+                {% endfor %}
+
+            {% endfor %}
+
+            {% if questions %}
+                <div class="col s12 mt-3">
+                    <button type="submit" id="end-button" class="btn btn-primary">Отправить</button>
+                </div>
+            {% else %}
+                <div class="col s12 mt-3">
+                    <span>Вопросы отсутствуют</span>
+                </div>
+            {% endif %}
+
+        </form>
+
+    {% endif %}
+
+
+
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/quiz/quiz.js' %}" defer></script>
+{% endblock %}

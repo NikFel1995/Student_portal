@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% load quiz_tags %}
+
+{% block section %}
+
+{% endblock %}
+
+{% block content %}
+
+    {% if attempt > quiz.allowed_attempts or curr_date > due_date %}
+
+        <div class="card">
+            <div class="card-header">
+                Результаты тестирования
+            </div>
+            <div class="card-body">
+                <h5 class="card-title text-danger">{{ result.quiz }} провалено.</h5>
+                {% if attempt > quiz.allowed_attempts %}
+                    <p class="card-text">Количество попыток было исчерпано!</p>
+                {% elif curr_date > due_date %}
+                    <p class="card-text">Срок выполнения тестирования уже истек!</p>
+                {% endif %}
+
+                <a href="{% url 'classroom:modules' group.pk course.pk %}" class="btn btn-primary">Назад</a>
+            </div>
+        </div>
+
+
+    {% else %}
+
+        <div class="card">
+            <div class="card-header">
+                Результаты тестирования
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ result.quiz }} завершено.</h5>
+                <p class="card-text">Вы ответили верно
+                    на {{ result.number_of_correct_answers }} {{ result.number_of_correct_answers|words_ending:"вопрос,вопроса,вопросов" }}
+                    из {{ result.quiz.questions.count }}. </p>
+                <p class="card-text"> Дата тестирования: {{ result.completed|date }}</p>
+                <a href="{% url 'classroom:modules' group.pk course.pk %}" class="btn btn-primary">Назад</a>
+            </div>
+        </div>
+
+    {% endif %}
+
+{% endblock %}

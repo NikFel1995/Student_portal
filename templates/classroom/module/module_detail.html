@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load mathfilters %}
+
+
+{% block section %} {% endblock %}
+{% block content %}
+
+    <div class="col-8">
+
+        <div class="tab-content" id="nav-tabContent">
+
+            <div class="tab-pane fade"
+                 id="{{ module.course.title }}_{{ module.id }}"
+                 role="tabpanel"
+                 aria-labelledby="module_{{ module.id }}">
+
+                <i>Количество часов: {{ module.hours }}</i>
+
+                <p> {{ module.description }}</p>
+
+
+                {% if module.contents.all %}
+                    <div class="card-header text-center">
+                        Материалы для изучения
+                    </div>
+                {% endif %}
+
+                {% for document in module.contents.all %}
+
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ document.title }}</h5>
+                            <p class="card-text">{{ document.description }}</p>
+                            <a href="{{ document.file.url }}" download="" class="btn btn-primary">Скачать</a>
+                        </div>
+                        <div class="card-footer text-muted">
+                            Дата добавления: {{ document.updated|date }}
+                        </div>
+                    </div>
+
+                {% endfor %}
+
+                {% if module.quizzes.all %}
+                    <div class="card-header text-center mt-3">
+                        Тестирование
+                    </div>
+                {% endif %}
+
+                {% for quiz in module.quizzes.all %}
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ quiz.title }}</h5>
+                            <p class="card-text">{{ quiz.description }}</p>
+
+                            <p class="card-text">
+                                Пройти до {{ quiz.due_date }}
+                                <br>
+                                Ограничение по времени: {{ quiz.time_limit_min }} мин.
+                                <br>
+                                Осталось попыток: {{ quiz.allowed_attempts|sub:user_results.count }}
+                            </p>
+
+                            {% if user_results.count < quiz.allowed_attempts %}
+                                {% if quiz.questions.count and quiz.due_date <= curr_date %}
+                                    <a href="{% url  'classroom:quiz:quiz' group.id module.course.id  module.id  quiz.id %}"
+                                       class="btn btn-primary">Пройти тестирование</a>
+                                {% endif %}
+
+                            {% endif %}
+
+                            <a href="{% url 'classroom:quiz:quiz_results' group.id course.id module.id quiz.id %}"
+                               class="btn btn-secondary">Результаты </a>
+
+                        </div>
+
+                        <div class="card-footer text-muted">
+                            Дата добавления: {{ quiz.created_date|date }}
+                        </div>
+                    </div>
+                {% endfor %}
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+{% endblock %}

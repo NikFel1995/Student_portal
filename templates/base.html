@@ -1,0 +1,123 @@
+{% load static %}
+
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Student portal">
+    <meta name="author" content="NikFel">
+
+    <title>Студенченский портал</title>
+
+
+    <link rel="icon" type="image/png" href="{% static 'favicon.png' %}">
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+
+</head>
+<body>
+
+<header>
+    {% include 'inc/navbar.html' %}
+</header>
+
+<main>
+
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-6 mt-3 offset-md-3">
+
+                {% block messages %}
+                    {% for message in messages %}
+                        <div class="alert {{ message.tags }} alert-dismissible shadow fade show" role="alert">
+                            {{ message | safe }}
+                        </div>
+                    {% endfor %}
+                {% endblock %}
+
+            </div>
+        </div>
+    </div>
+
+
+
+    {% block section %}
+        <section class="py-5 text-center container">
+            <div class="row py-lg-5">
+                <div class="col-lg-6 col-md-8 mx-auto">
+
+                    {% if not user.is_authenticated %}
+
+                        <h1 class="fw-light">Добро пожаловать!</h1>
+                        <p class="lead text-muted">
+                            Зарегистрируйтесь или войдите в аккаунт.
+                        </p>
+                        <p>
+                            Затем выберите свою группу и курс для прохождения.
+                        </p>
+                        <p>
+                            <a href="{% url 'accounts:register' %}" class="btn btn-primary my-2">Регистрация</a>
+                            <a href="{% url 'accounts:login' %}" class="btn btn-secondary my-2">Вход</a>
+                        </p>
+
+                    {% else %}
+
+                        <h1 class="fw-light">Добро пожаловать, {{ user.username }}!</h1>
+                        <a href="{% url 'accounts:profile' %}" class="btn btn-light my-2">Личный кабинет</a>
+                        <a href="{% url 'accounts:logout' %}" class="btn btn-secondary my-2">Выход</a>
+
+                        <p class="lead text-muted">
+                            {% if not user.group_joined.first %}
+                                Присоединитесь к группе для начала обучения.
+                            {% else %}
+                                Выберите курс для прохождения.
+                            {% endif %}
+
+                        </p>
+                        <p>
+
+                        </p>
+                        <p>
+                            {% if user.group_joined.first %}
+                                <a href="{% url 'classroom:courses' user.group_joined.first.pk %}" class="btn btn-primary my-2">Продолжить обучение</a>
+                            {% endif %}
+                        <p>
+
+                    {% endif %}
+
+                </div>
+            </div>
+        </section>
+    {% endblock %}
+
+    <div class="album py-5 bg-light">
+        <div class="container">
+
+
+            {% block content %}   {% endblock %}
+
+        </div>
+    </div>
+
+</main>
+
+
+<footer class="text-muted py-5">
+    <div class="container">
+        <p class="mb-1">Дизайн разработан с использованием фреймворка <a href="https://getbootstrap.com/">Bootstrap</a></p>
+    </div>
+</footer>
+
+
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/jquery.min.js' %}"></script>
+{% block scripts %} {% endblock %}
+
+</body>
+</html>

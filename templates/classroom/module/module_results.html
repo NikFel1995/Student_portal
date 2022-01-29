@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% load tags %}
+
+{% block section %} {% endblock %}
+
+{% block content %}
+
+    <h3>Результаты тестирования для группы {{ group.title }} по курсу {{ course.title }} </h3>
+
+    <h2>{{ module.title }}</h2>
+    <br>
+
+
+
+    <table class="table table-striped table-hover">
+        <thead>
+        <tr>
+            <th scope="col">Позиция</th>
+            <th scope="col">Студент</th>
+            <th scope="col">Домашнее задание</th>
+            <th scope="col">Результаты тестирования</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for student in users_in_group %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>
+                    {{ student.get_full_name }}
+                    <a href="{% url 'accounts:show_user_profile' student.id %} "><span class="badge alert-dark"> инфо</span></a>
+                </td>
+                <td>
+                    {% for homework in student|get_user_content:module %}
+                        <a href="{{ homework.file.url }}" download=""> {{ homework }}</a>
+                    {% endfor %}
+                </td>
+
+
+                <td>
+                    {% for result in student|get_user_results:module %}
+                        {{ result.quiz__title }}
+                        <span class="badge alert-dark">{{ result.number_of_correct_answers__max }} верных ответа</span>
+                        <br>
+
+                    {% endfor %}
+
+                </td>
+            </tr>
+
+        {% endfor %}
+        </tbody>
+
+    </table>
+
+
+{% endblock %}
+

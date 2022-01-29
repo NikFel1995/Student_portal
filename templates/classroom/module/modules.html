@@ -1,0 +1,289 @@
+{% extends 'base.html' %}
+
+{% load mathfilters %}
+
+{% block section %} {% endblock %}
+
+{% block content %}
+
+    <h4> Курс {{ course.title }}</h4>
+
+    <i>{{ course.description }}</i>
+
+    <div class="row mt-3">
+
+        <div class="col-4">
+
+            <div class="list-group" id="list-tab" role="tablist">
+
+                {% for module in modules %}
+                    <a class="list-group-item list-group-item-action"
+                       id="module_{{ module.id }}"
+                       data-bs-toggle="list"
+                       href="#{{ module.course.title }}_{{ module.id }}"
+                       role="tab"
+                       aria-controls="{{ module.course.title }}_{{ module.id }}">
+                        {{ module.title }}
+                    </a>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        <div class="col-8">
+
+            <div class="tab-content" id="nav-tabContent">
+
+                {% for module in modules %}
+
+                    <div class="tab-pane fade"
+                         id="{{ module.course.title }}_{{ module.id }}"
+                         role="tabpanel"
+                         aria-labelledby="module_{{ module.id }}">
+
+                        <i>Количество часов: {{ module.hours }}</i>
+
+                        <p> {{ module.description }}</p>
+
+
+                        <div class="accordion mb-3" id="accordionPanelsStayOpenExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                                    <button class="accordion-button"
+                                            type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseOne"
+                                            aria-expanded="true"
+                                            aria-controls="panelsStayOpen-collapseOne">
+                                        Домашнее задание
+                                    </button>
+                                </h2>
+
+
+
+
+                                {% if form.non_field_errors %}
+                                    <ul>
+                                        {% for error in form.non_field_errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+
+
+
+
+                                <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+                                    <div class="accordion-body">
+
+
+                                        <div class="card mb-3">
+                                            <div class="card-header">
+                                                Мои работы
+                                            </div>
+                                            <div class="card-body">
+                                                {% for document in module.contents.all %}
+
+                                                    {% if user == document.user %}
+                                                        {#{% url 'classroom:modules' group.id course.id %}#}
+
+
+                                                        <ul class="list-group mb-2">
+                                                            <li class="list-group-item d-flex justify-content-between align-items-start">
+                                                                <div class="ms-2 me-auto">
+                                                                    <div class="fw-bold">{{ document.title }}</div>
+                                                                    {{ document.description }}
+                                                                </div>
+                                                                <div class="me-5 text-muted">
+                                                                    Загружено: {{ document.created }}
+                                                                </div>
+                                                                <a href="{{ document.file.url }}" download="" class="me-5">Скачать</a>
+
+
+                                                                <a href=""
+                                                                   data-bs-toggle="modal"
+                                                                   data-bs-target="#staticBackdrop{{ document.id }}">
+                                                                    <span class="badge bg-danger rounded-pill">Удалить</span>
+                                                                </a>
+
+                                                                <!-- Modal -->
+                                                                <div class="modal fade" id="staticBackdrop{{ document.id }}" data-bs-backdrop="static"
+                                                                     data-bs-keyboard="false"
+                                                                     tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                                                     aria-hidden="true">
+                                                                    <div class="modal-dialog">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <h5 class="modal-title" id="staticBackdropLabel">
+                                                                                    Вы действительно хотите удалить
+                                                                                    документ {{ document.title }}?
+                                                                                </h5>
+                                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                                        aria-label="Close"></button>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                Документ будет удален без возможности восстановления.
+                                                                                Подтвердите удаление нажатием кнопки "Да".
+                                                                            </div>
+
+                                                                            <form action="{% url 'classroom:delete_homework'  group.id course.id module.id document.id %}"
+                                                                                  method="post">
+                                                                                {% csrf_token %}
+
+                                                                                <div class="modal-footer">
+                                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                                                        Закрыть
+                                                                                    </button>
+
+                                                                                    <button type="submit" class="btn btn-primary">Да</button>
+
+                                                                                </div>
+                                                                            </form>
+
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+
+                                                    {% endif %}
+
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+
+
+                                        <h4 class="form mt-2">Добавить работу</h4>
+
+
+                                        <form action="{% url 'classroom:send_homework' group.id course.id module.id %}" method="post"
+                                              enctype="multipart/form-data">
+                                            {% csrf_token %}
+
+                                            <div class="form-floating mb-3">
+                                                {{ form.title }}
+                                                <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+                                            </div>
+
+                                            <div class="form-floating mb-3">
+                                                {{ form.description }}
+                                                <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="{{ form.file.id_for_label }}" class="form-label">{{ form.file.help_text }}</label>
+                                                {{ form.file }}
+                                            </div>
+
+                                            <button type="submit" class="btn btn-primary">Прикрепить</button>
+
+                                        </form>
+
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+                        {% if module.contents.all %}
+                            <div class="card-header text-center">
+                                Материалы для изучения
+                            </div>
+                        {% endif %}
+
+                        {% for document in module.contents.all %}
+                            {% if user != document.user %}
+                                <div class="card mt-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ document.title }}</h5>
+                                        <p class="card-text">{{ document.description }}</p>
+                                        <a href="{{ document.file.url }}" download="" class="btn btn-primary">Скачать</a>
+                                    </div>
+                                    <div class="card-footer text-muted">
+                                        Дата добавления: {{ document.updated|date }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if module.quizzes.all %}
+                            <div class="card-header text-center mt-3">
+                                Тестирование
+                            </div>
+                        {% endif %}
+
+                        {% for quiz in module.quizzes.all %}
+                            <div class="card mt-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ quiz.title }}</h5>
+                                    <p class="card-text">{{ quiz.description }}</p>
+
+                                    <p class="card-text">
+                                        Пройти до {{ quiz.due_date }}
+                                        <br>
+                                        Ограничение по времени: {{ quiz.time_limit_min }} мин.
+                                        <br>
+
+                                        {% if not quiz.results.all %}
+                                            Осталось попыток: {{ quiz.allowed_attempts }}
+                                        {% else %}
+                                            {% for result in quiz.results.all|slice:":1" %}
+                                                {% if result in user_results %}
+                                                    Осталось попыток: {{ quiz.allowed_attempts|sub:result.attempt }}
+                                                {% else %}
+                                                    Осталось попыток: {{ quiz.allowed_attempts }}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+
+                                    </p>
+
+                                    {% if not quiz.results.all %}
+                                        <a href="{% url  'classroom:quiz:quiz' group.id module.course.id  module.id  quiz.id %}"
+                                           class="btn btn-primary">Пройти тестирование</a>
+                                    {% else %}
+
+
+                                        {% for result in quiz.results.all|slice:":1" %}
+                                            {% if result in user_results %}
+
+                                                {% if result.attempt < quiz.allowed_attempts and  quiz.questions.count and curr_date  <= quiz.due_date %}
+                                                    <a href="{% url  'classroom:quiz:quiz' group.id module.course.id  module.id  quiz.id %}"
+                                                       class="btn btn-primary">Пройти тестирование</a>
+                                                {% else %}
+                                                    <p class="text-primary">Тестирование завершено</p>
+                                                {% endif %}
+
+                                                <a href="{% url 'classroom:quiz:quiz_results' group.id course.id module.id quiz.id %}"
+                                                   class="btn btn-secondary">Результаты </a>
+
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+
+                                <div class="card-footer text-muted">
+                                    Дата добавления: {{ quiz.created_date|date }}
+                                </div>
+                            </div>
+                        {% endfor %}
+
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock %}
+
+
