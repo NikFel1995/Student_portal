@@ -20,7 +20,7 @@
                     <a class="list-group-item list-group-item-action"
                        id="module_{{ module.id }}"
                        data-bs-toggle="list"
-                       href="#{{ module.course.title }}_{{ module.id }}"
+                       href="#_{{ module.id }}"
                        role="tab"
                        aria-controls="{{ module.course.title }}_{{ module.id }}">
                         {{ module.title }}
@@ -39,7 +39,7 @@
                 {% for module in modules %}
 
                     <div class="tab-pane fade"
-                         id="{{ module.course.title }}_{{ module.id }}"
+                         id="_{{ module.id }}"
                          role="tabpanel"
                          aria-labelledby="module_{{ module.id }}">
 
@@ -243,11 +243,12 @@
 
                                     </p>
 
+
                                     {% if not quiz.results.all %}
                                         <a href="{% url  'classroom:quiz:quiz' group.id module.course.id  module.id  quiz.id %}"
                                            class="btn btn-primary">Пройти тестирование</a>
-                                    {% else %}
 
+                                    {% else %}
 
                                         {% for result in quiz.results.all|slice:":1" %}
                                             {% if result in user_results %}
@@ -262,9 +263,14 @@
                                                 <a href="{% url 'classroom:quiz:quiz_results' group.id course.id module.id quiz.id %}"
                                                    class="btn btn-secondary">Результаты </a>
 
+                                            {% else %}
+                                                <a href="{% url  'classroom:quiz:quiz' group.id module.course.id  module.id  quiz.id %}"
+                                                   class="btn btn-primary">Пройти тестирование</a>
+
                                             {% endif %}
                                         {% endfor %}
                                     {% endif %}
+
                                 </div>
 
                                 <div class="card-footer text-muted">

@@ -20,7 +20,7 @@
                     <a class="list-group-item list-group-item-action"
                        id="module_{{ result.id }}"
                        data-bs-toggle="list"
-                       href="#{{ result.quiz.module.course.title }}_{{ result.id }}"
+                       href="#_{{ result.id }}"
                        role="tab"
                        aria-controls="{{ result.quiz.module.course.title }}_{{ result.id }}">
                         Попытка {{ result.attempt }}
@@ -43,7 +43,7 @@
             <div class="tab-content" id="nav-tabContent">
                 {% for result in results %}
                     <div class="tab-pane fade"
-                         id="{{ result.quiz.module.course.title }}_{{ result.id }}"
+                         id="_{{ result.id }}"
                          role="tabpanel"
                          aria-labelledby="module_{{ result.id }}">
 

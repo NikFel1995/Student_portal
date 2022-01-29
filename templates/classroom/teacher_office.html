@@ -47,22 +47,22 @@
                         <i>Количество студентов: {{ group.students.count }}</i>
 
 
-                        <div class="accordion mt-3" id="accordionPanelsStayOpenExample">
+                        <div class="accordion mt-3">
 
                             <div class="accordion-item">
 
-                                <h2 class="accordion-header" id="panelsStayOpen-{{ group.id }}">
+                                <h2 class="accordion-header" id="_{{ group.id }}">
                                     <button class="accordion-button"
                                             type="button"
                                             data-bs-toggle="collapse"
-                                            data-bs-target="#panelsStayOpen-{{ group.title }}"
+                                            data-bs-target="#__{{ group.id }}"
                                             aria-expanded="true"
-                                            aria-controls="panelsStayOpen-{{ group.title }}">
+                                            aria-controls="__{{ group.id }}">
                                         Студенты
                                     </button>
                                 </h2>
 
-                                <div id="panelsStayOpen-{{ group.title }}" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-{{ group.id }}">
+                                <div id="__{{ group.id }}" class="accordion-collapse collapse" aria-labelledby="_{{ group.id }}">
                                     <div class="accordion-body">
 
                                         <ol class="list-group list-group-numbered">
@@ -84,19 +84,18 @@
 
                             <div class="accordion-item mt-3">
 
-                                <h2 class="accordion-header" id="panelsStayOpen-{{ group.id }}_">
+                               <h2 class="accordion-header" id="_{{ group.slug }}">
                                     <button class="accordion-button"
                                             type="button"
                                             data-bs-toggle="collapse"
-                                            data-bs-target="#panelsStayOpen-{{ group.title }}_"
+                                            data-bs-target="#_{{ group.id }}_"
                                             aria-expanded="true"
-                                            aria-controls="panelsStayOpen-{{ group.title }}_">
+                                            aria-controls="_{{ group.id }}_">
                                         Курсы
                                     </button>
                                 </h2>
 
-                                <div id="panelsStayOpen-{{ group.title }}_" class="accordion-collapse collapse"
-                                     aria-labelledby="panelsStayOpen-{{ group.id }}_">
+                               <div id="_{{ group.id }}_" class="accordion-collapse collapse" aria-labelledby="_{{ group.slug }}">
                                     <div class="accordion-body">
 
                                         {% for course in group.courses_joined.all %}
