@@ -253,7 +253,7 @@
                                         {% for result in quiz.results.all|slice:":1" %}
                                             {% if result in user_results %}
 
-                                                {% if result.attempt < quiz.allowed_attempts and  quiz.questions.count and curr_date  <= quiz.due_date %}
+                                                {% if result.attempt < quiz.allowed_attempts and quiz.questions.count and curr_date  <= quiz.due_date %}
                                                     <a href="{% url  'classroom:quiz:quiz' group.id module.course.id  module.id  quiz.id %}"
                                                        class="btn btn-primary">Пройти тестирование</a>
                                                 {% else %}
@@ -263,7 +263,7 @@
                                                 <a href="{% url 'classroom:quiz:quiz_results' group.id course.id module.id quiz.id %}"
                                                    class="btn btn-secondary">Результаты </a>
 
-                                            {% else %}
+                                            {% elif quiz.questions.count and curr_date  <= quiz.due_date %}
                                                 <a href="{% url  'classroom:quiz:quiz' group.id module.course.id  module.id  quiz.id %}"
                                                    class="btn btn-primary">Пройти тестирование</a>
 

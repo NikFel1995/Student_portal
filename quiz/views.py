@@ -71,6 +71,12 @@ def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
 
+# округление числа
+def int_r(num):
+    num = int(num + (0.5 if num > 0 else -0.5))
+    return num
+
+
 @login_required
 def submitAttempt(request, group_id, course_id, module_id, quiz_id):
     user = request.user
@@ -119,11 +125,29 @@ def submitAttempt(request, group_id, course_id, module_id, quiz_id):
         val = questions.get(str(k), 0)
         if val != 0:
             if type(v) == list and type(val) == list:  # если пришли списки ответов, то мы их сортируем, чтобы потом сравнить
-                v = sorted(v)
-                val = sorted(val)
+                v = sorted(v)  # ответы пользователя
+                val = sorted(val)  # правильные ответы
 
-            if val == v:
-                total_points += 1
+            points = 0  # максим. кол-во баллов за ответ
+            if type(val) == list:  # если в вопросе неск-во вариантов ответа
+                points = 1 / len(val)  # количество баллов за каждый правильный ответ
+                if type(v) == list:  # если ответы пользователя тоже список
+                    for c_a, u_a in zip(val, v):
+                        if c_a == u_a:
+                            total_points += points
+                else:  # если ответы пользователя просто число или вообще нет ответа
+                    if v in val:
+                        total_points += points
+
+            else:  # если 1 правильнный ответ на вопрос
+                if type(v) == list:  # если пользователь выбрал несколько вариантов ответа
+                    if val in v:  # если правильный ответ на вопрос есть в ответах пользователя
+                        total_points += 1 / len(v)
+                else:  # пользователь дал 1 ответ
+                    if val == v:
+                        total_points += 1
+
+    total_points = int_r(total_points)  # производим округление числа
 
     attempt = 1  # по умолч. это первая попытка
 

@@ -154,6 +154,7 @@ def moduleDetail(request, group_id, course_id, module_id):
     module = get_object_or_404(Module, id=module_id)
     user_results = Result.objects.filter(user=user, user__group_joined=group)  # результаты тестирования пользователя
     curr_date = datetime.date.today()
+    print('fd')
     context = {'group': group, 'course': course, 'module': module, 'user_results': user_results, 'curr_date': curr_date}
     return render(request, 'classroom/module/module_detail.html', context)
 
